@@ -15,7 +15,7 @@ echo -e "[ ${green}INFO${NC} ] Checking... "
 apt install iptables iptables-persistent -y
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Setting ntpdate"
-ntpdate pool.ntp.org 
+timedatectl pool.ntp.org 
 timedatectl set-ntp true
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Enable chronyd"
@@ -31,10 +31,9 @@ echo -e "[ ${green}INFO$NC ] Setting chrony tracking"
 chronyc sourcestats -v
 chronyc tracking -v
 echo -e "[ ${green}INFO$NC ] Setting dll"
-apt clean all && apt update
-apt install curl socat xz-utils wget apt-transport-https gnupg gnupg2 gnupg1 dnsutils lsb-release -y 
-apt install socat cron bash-completion ntpdate -y
-ntpdate pool.ntp.org
+apt update
+apt install curl socat xz-utils wget apt-transport-https gnupg dnsutils lsb-release chrony -y apt install socat cron bash-completion ntpdate -y
+timedatectl pool.ntp.org
 apt -y install chrony
 apt install zip -y
 apt install curl pwgen openssl netcat cron -y
@@ -68,14 +67,23 @@ chmod +x /root/.acme.sh/acme.sh
 ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
 
 # nginx renew ssl
-echo -n '#!/bin/bash
-/etc/init.d/nginx stop
+cat > /usr/local/bin/ssl_renew.sh << END
+#!/bin/bash
+# Menghentikan nginx menggunakan systemctl (Standar Ubuntu Modern)
+systemctl stop nginx
+# Menjalankan pembaruan sertifikat
 "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" &> /root/renew_ssl.log
-/etc/init.d/nginx start
-/etc/init.d/nginx status
-' > /usr/local/bin/ssl_renew.sh
+# Menjalankan kembali nginx
+systemctl start nginx
+END
+
+# Memberikan izin eksekusi pada file script
 chmod +x /usr/local/bin/ssl_renew.sh
-if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab;fi
+
+# Menambahkan ke cron agar berjalan otomatis setiap 3 hari jam 03:15 pagi
+if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root; then
+    (crontab -l 2>/dev/null; echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab -
+fi
 
 mkdir -p /home/vps/public_html
 
