@@ -21,8 +21,8 @@ echo -e "[ ${green}INFO$NC ] Setting ntpdate"
 timedatectl set-ntp true
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Enable chronyd"
-systemctl enable chronyd
-systemctl restart chronyd
+systemctl enable chrony
+systemctl restart chrony
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Enable chrony"
 timedatectl set-timezone Asia/Jakarta
