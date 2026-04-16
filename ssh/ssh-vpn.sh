@@ -48,29 +48,24 @@ WantedBy=multi-user.target
 END
 
 # nano /etc/rc.local
-cat > /etc/rc.local <<-END
+if [ ! -f /etc/rc.local ]; then
+    cat > /etc/rc.local <<-END
 #!/bin/sh -e
 # rc.local
-# By default this script does nothing.
 exit 0
 END
-
-# Ubah izin akses
+fi
 chmod +x /etc/rc.local
-
 # enable rc local
+systemctl daemon-reload
 systemctl enable rc-local
 systemctl start rc-local.service
-if [ ! -f /etc/rc.local ]; then
-    echo -e '#!/bin/bash\nexit 0' > /etc/rc.local
-    chmod +x /etc/rc.local
-fi
 # disable ipv6
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
-
 #update
 apt update -y
+apt install python3 python3-pip -y
 apt upgrade -y
 apt dist-upgrade -y
 apt-get remove --purge ufw firewalld -y
@@ -88,8 +83,6 @@ apt -y install wget curl
 #figlet
 apt-get install figlet -y
 apt-get install ruby -y
-apt install lolcat -y
-apt install python3 python3-pip -y
 apt install make -y
 apt install cmake -y
 apt install coreutils -y
@@ -125,7 +118,7 @@ elif [[ $ver == "22.04" || $ver == "24.04" ]]; then
     apt install -y libssl-dev
 fi
 apt install dos2unix -y
-gem install lolcat
+apt install lolcat -y
 apt install -y iptables-persistent netfilter-persistent
 
 # set time GMT +7
