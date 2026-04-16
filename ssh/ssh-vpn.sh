@@ -1,4 +1,8 @@
 #!/bin/bash
+# Get OS Version
+source /etc/os-release
+OS=$ID
+ver=$VERSION_ID
 # cari apa
 apt dist-upgrade -y
 apt install netfilter-persistent -y
@@ -59,7 +63,10 @@ chmod +x /etc/rc.local
 # enable rc local
 systemctl enable rc-local
 systemctl start rc-local.service
-
+if [ ! -f /etc/rc.local ]; then
+    echo -e '#!/bin/bash\nexit 0' > /etc/rc.local
+    chmod +x /etc/rc.local
+fi
 # disable ipv6
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
@@ -83,7 +90,8 @@ apt -y install wget curl
 #figlet
 apt-get install figlet -y
 apt-get install ruby -y
-apt install python -y
+apt install lolcat -y
+apt install python3 python3-pip -y
 apt install make -y
 apt install cmake -y
 apt install coreutils -y
@@ -110,10 +118,17 @@ apt install gcc -y
 apt install g++ -y
 apt install libreadline-dev -y
 apt install zlib1g-dev -y
-apt install libssl-dev -y
-apt install libssl1.0-dev -y
+# Logic for Ubuntu version dependent packages
+if [[ $ver == "18.04" ]]; then
+    apt install -y libssl1.0-dev
+elif [[ $ver == "20.04" ]]; then
+    apt install -y libssl-dev
+elif [[ $ver == "22.04" || $ver == "24.04" ]]; then
+    apt install -y libssl-dev
+fi
 apt install dos2unix -y
 gem install lolcat
+apt install -y iptables-persistent netfilter-persistent
 
 # set time GMT +7
 ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
@@ -123,37 +138,10 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 
 
 install_ssl(){
-    if [ -f "/usr/bin/apt-get" ];then
-            isDebian=`cat /etc/issue|grep Debian`
-            if [ "$isDebian" != "" ];then
-                    apt-get install -y nginx certbot
-                    apt install -y nginx certbot
-                    sleep 3s
-            else
-                    apt-get install -y nginx certbot
-                    apt install -y nginx certbot
-                    sleep 3s
-            fi
-    else
-        yum install -y nginx certbot
-        sleep 3s
-    fi
-
-    systemctl stop nginx.service
-
-    if [ -f "/usr/bin/apt-get" ];then
-            isDebian=`cat /etc/issue|grep Debian`
-            if [ "$isDebian" != "" ];then
-                    echo "A" | certbot certonly --renew-by-default --register-unsafely-without-email --standalone -d $domain
-                    sleep 3s
-            else
-                    echo "A" | certbot certonly --renew-by-default --register-unsafely-without-email --standalone -d $domain
-                    sleep 3s
-            fi
-    else
-        echo "Y" | certbot certonly --renew-by-default --register-unsafely-without-email --standalone -d $domain
-        sleep 3s
-    fi
+    apt-get install -y nginx certbot python3-certbot-nginx
+    systemctl stop nginx
+    # Gunakan email dummy agar tidak interaktif
+    certbot certonly --standalone --preferred-challenges http --agree-tos --email aji@store.com -d $domain
 }
 
 # install webserver
@@ -164,7 +152,7 @@ rm /etc/nginx/sites-available/default
 wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/givpn/AutoScriptXray/master/ssh/nginx.conf"
 rm /etc/nginx/conf.d/vps.conf
 wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/givpn/AutoScriptXray/master/ssh/vps.conf"
-/etc/init.d/nginx restart
+systemctl restart nginx
 
 mkdir /etc/systemd/system/nginx.service.d
 printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" > /etc/systemd/system/nginx.service.d/override.conf
@@ -212,7 +200,7 @@ sed -i '/Port 22/a Port 58080' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 666' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 200' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 22' /etc/ssh/sshd_config
-/etc/init.d/ssh restart
+systemctl restart ssh
 
 echo "=== Install Dropbear ==="
 # install dropbear
@@ -222,8 +210,8 @@ sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=143/g' /etc/default/dropbear
 sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-p 50000 -p 109 -p 110 -p 69"/g' /etc/default/dropbear
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
-/etc/init.d/ssh restart
-/etc/init.d/dropbear restart
+systemctl restart ssh
+systemctl restart dropbear
 
 cd
 # install stunnel
@@ -263,7 +251,7 @@ cat key.pem cert.pem >> /etc/stunnel/stunnel.pem
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 /lib/systemd/systemd-sysv-install enable stunnel4
 systemctl start stunnel4
-/etc/init.d/stunnel4 restart
+systemctl restart stunnel4
 
 
 # install fail2ban
@@ -435,28 +423,28 @@ cd
 chown -R www-data:www-data /home/vps/public_html
 sleep 0.5
 echo -e "$yell[SERVICE]$NC Restart All service SSH & OVPN"
-/etc/init.d/nginx restart >/dev/null 2>&1
+systemctl restart nginx >/dev/null 2>&1
 sleep 0.5
 echo -e "[ ${green}ok${NC} ] Restarting nginx"
-/etc/init.d/openvpn restart >/dev/null 2>&1
+systemctl restart openvpn >/dev/null 2>&1
 sleep 0.5
 echo -e "[ ${green}ok${NC} ] Restarting cron "
-/etc/init.d/ssh restart >/dev/null 2>&1
+systemctl restart ssh >/dev/null 2>&1
 sleep 0.5
 echo -e "[ ${green}ok${NC} ] Restarting ssh "
-/etc/init.d/dropbear restart >/dev/null 2>&1
+systemctl restart dropbear >/dev/null 2>&1
 sleep 0.5
 echo -e "[ ${green}ok${NC} ] Restarting dropbear "
-/etc/init.d/fail2ban restart >/dev/null 2>&1
+systemctl restart fail2ban >/dev/null 2>&1
 sleep 0.5
 echo -e "[ ${green}ok${NC} ] Restarting fail2ban "
-/etc/init.d/stunnel4 restart >/dev/null 2>&1
+systemctl restart stunnel4 >/dev/null 2>&1
 sleep 0.5
 echo -e "[ ${green}ok${NC} ] Restarting stunnel4 "
-/etc/init.d/vnstat restart >/dev/null 2>&1
+systemctl restart vnstat >/dev/null 2>&1
 sleep 0.5
 echo -e "[ ${green}ok${NC} ] Restarting vnstat "
-/etc/init.d/squid restart >/dev/null 2>&1
+systemctl restart squid >/dev/null 2>&1
 
 screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7100 --max-clients 500
 screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7200 --max-clients 500
