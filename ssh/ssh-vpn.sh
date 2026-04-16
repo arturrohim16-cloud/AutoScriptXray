@@ -14,8 +14,6 @@ export DEBIAN_FRONTEND=noninteractive
 MYIP=$(wget -qO- ipv4.icanhazip.com);
 MYIP2="s/xxxxxxxxx/$MYIP/g";
 NET=$(ip -o $ANU -4 route show to default | awk '{print $5}');
-source /etc/os-release
-ver=$VERSION_ID
 
 #detail nama perusahaan
 country=ID
