@@ -25,9 +25,11 @@ systemctl enable chronyd
 systemctl restart chronyd
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Enable chrony"
+timedatectl set-timezone Asia/Jakarta
+timedatectl set-ntp true
+systemctl daemon-reload
 systemctl enable chrony
 systemctl restart chrony
-timedatectl set-timezone Asia/Jakarta
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Setting chrony tracking"
 chronyc sourcestats -v
@@ -35,12 +37,6 @@ chronyc tracking -v
 echo -e "[ ${green}INFO$NC ] Setting dll"
 apt update
 apt install curl socat xz-utils wget apt-transport-https gnupg dnsutils lsb-release chrony cron bash-completion ntpdate zip pwgen openssl netcat -y
-timedatectl pool.ntp.org
-apt -y install chrony
-apt install zip -y
-apt install curl pwgen openssl netcat cron -y
-
-
 # install xray
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
