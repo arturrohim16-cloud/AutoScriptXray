@@ -1,5 +1,8 @@
 #!/bin/bash
 MYIP=$(wget -qO- ipv4.icanhazip.com);
+green='\e[0;32m'
+NC='\e[0m'
+yell='\e[0;33m'
 echo "Checking VPS"
 clear
 echo -e "
@@ -15,7 +18,6 @@ echo -e "[ ${green}INFO${NC} ] Checking... "
 apt install iptables iptables-persistent -y
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Setting ntpdate"
-timedatectl pool.ntp.org 
 timedatectl set-ntp true
 sleep 0.5
 echo -e "[ ${green}INFO$NC ] Enable chronyd"
@@ -32,7 +34,7 @@ chronyc sourcestats -v
 chronyc tracking -v
 echo -e "[ ${green}INFO$NC ] Setting dll"
 apt update
-apt install curl socat xz-utils wget apt-transport-https gnupg dnsutils lsb-release chrony -y apt install socat cron bash-completion ntpdate -y
+apt install curl socat xz-utils wget apt-transport-https gnupg dnsutils lsb-release chrony cron bash-completion ntpdate zip pwgen openssl netcat -y
 timedatectl pool.ntp.org
 apt -y install chrony
 apt install zip -y
