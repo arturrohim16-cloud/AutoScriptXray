@@ -112,6 +112,7 @@ class ConnectionHandler(threading.Thread):
     def run(self):
         try:
             self.client_buffer = self.client.recv(BUFLEN)
+            self.client_buffer = self.client_buffer.decode('utf-8', 'ignore')
 
             hostPort = self.findHeader(self.client_buffer, 'X-Real-Host')
 
@@ -222,7 +223,7 @@ class ConnectionHandler(threading.Thread):
 
 
 def print_usage():
-    print 'Usage: proxy.py -p <port>'
+    python print('Usage: proxy.py -p <port>') print('proxy.py -b <bindAddr> -p <port>') 
     print '       proxy.py -b <bindAddr> -p <port>'
     print '       proxy.py -b 0.0.0.0 -p 80'
 
