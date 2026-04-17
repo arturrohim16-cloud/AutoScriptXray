@@ -63,7 +63,7 @@ if [ "" = "$PKG_OK" ]; then
   sleep 0.5
   echo -e "[ ${BRed}WARNING${NC} ] Try to install ...."
   echo "No $REQUIRED_PKG. Setting up $REQUIRED_PKG."
-  apt-get --yes install $REQUIRED_PKG
+  apt-get install -y linux-headers-generic $REQUIRED_PKG
   sleep 0.5
   echo ""
   sleep 0.5
