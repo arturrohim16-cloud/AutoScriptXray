@@ -49,7 +49,7 @@ class Server(threading.Thread):
                 self.addConn(conn)
         finally:
             self.running = False
-            print(log)
+            self.soc.close()
 
     def printLog(self, log):
         self.logLock.acquire()
