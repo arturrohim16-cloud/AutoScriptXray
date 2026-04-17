@@ -3,7 +3,10 @@ import socket, threading, select, signal, sys, time, getopt
 
 # Listen
 LISTENING_ADDR = '0.0.0.0'
-LISTENING_PORT = sys.argv[1]
+try:
+    LISTENING_PORT = sys.argv[1]
+except:
+    LISTENING_PORT = 8080 # Ini port cadangan jika lupa isi
 
 # Pass
 PASS = ''
@@ -46,7 +49,7 @@ class Server(threading.Thread):
                 self.addConn(conn)
         finally:
             self.running = False
-            self.soc.close()
+            print(log)
 
     def printLog(self, log):
         self.logLock.acquire()
@@ -113,7 +116,6 @@ class ConnectionHandler(threading.Thread):
         try:
             self.client_buffer = self.client.recv(BUFLEN)
             self.client_buffer = self.client_buffer.decode('utf-8', 'ignore')
-
             hostPort = self.findHeader(self.client_buffer, 'X-Real-Host')
 
             if hostPort == '':
@@ -130,17 +132,17 @@ class ConnectionHandler(threading.Thread):
                 if len(PASS) != 0 and passwd == PASS:
                     self.method_CONNECT(hostPort)
                 elif len(PASS) != 0 and passwd != PASS:
-                    self.client.send('HTTP/1.1 400 WrongPass!\r\n\r\n')
+                    self.client.send(b'HTTP/1.1 400 WrongPass!\r\n\r\n')
                 elif hostPort.startswith('127.0.0.1') or hostPort.startswith('localhost'):
                     self.method_CONNECT(hostPort)
                 else:
-                    self.client.send('HTTP/1.1 403 Forbidden!\r\n\r\n')
+                    self.client.send(b'HTTP/1.1 403 Forbidden!\r\n\r\n')
             else:
                 print ('- No X-Real-Host!')
-                self.client.send('HTTP/1.1 400 NoXRealHost!\r\n\r\n')
+                self.client.send(b'HTTP/1.1 400 NoXRealHost!\r\n\r\n')
 
         except Exception as e:
-            self.log += ' - error: ' + e.strerror
+            self.log += ' - error: ' + str(e)
             self.server.printLog(self.log)
 	    pass
         finally:
@@ -183,8 +185,8 @@ class ConnectionHandler(threading.Thread):
         self.log += ' - CONNECT ' + path
 
         self.connect_target(path)
-        self.client.sendall(RESPONSE)
-        self.client_buffer = ''
+        self.client.sendall(RESPONSE.encode())
+        self.client_buffer = b''
 
         self.server.printLog(self.log)
         self.doCONNECT()
@@ -224,8 +226,8 @@ class ConnectionHandler(threading.Thread):
 
 def print_usage():
     python print('Usage: proxy.py -p <port>') print('proxy.py -b <bindAddr> -p <port>') 
-    print '       proxy.py -b <bindAddr> -p <port>'
-    print '       proxy.py -b 0.0.0.0 -p 80'
+    print '       (proxy.py -b <bindAddr> -p <port>')
+    print '       (proxy.py -b 0.0.0.0 -p 80')
 
 def parse_args(argv):
     global LISTENING_ADDR
@@ -248,7 +250,7 @@ def parse_args(argv):
 
 def main(host=LISTENING_ADDR, port=LISTENING_PORT):
     print "\n:-------PythonProxy-------:\n"
-    print "Listening addr: " + LISTENING_ADDR
+    print ("Listening addr: " + LISTENING_ADDR)
     print "Listening port: " + str(LISTENING_PORT) + "\n"
     print ":-------------------------:\n"
     server = Server(LISTENING_ADDR, LISTENING_PORT)
