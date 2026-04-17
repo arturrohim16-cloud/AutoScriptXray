@@ -256,6 +256,7 @@ secs_to_human "$(($(date +%s) - ${start}))" | tee -a log-install.txt
 echo -e ""
 echo " Auto reboot in 10 Seconds "
 sleep 10
+history -w
 rm -rf setup.sh
 reboot
 
