@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/python3
 clear
 cd
+# Tambahkan ini di bawah baris 3
+apt update && apt install python3 -y
 
 #Install Script Websocket-SSH Python
 wget -O /usr/local/bin/ws-dropbear https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/ws-dropbear
