@@ -14,7 +14,7 @@ chmod +x /usr/local/bin/ws-stunnel
 wget -O /etc/systemd/system/ws-dropbear.service https://raw.githubusercontent.com/givpn/AutoScriptXray/master/sshws/service-wsdropbear && chmod +x /etc/systemd/system/ws-dropbear.service
 
 #System SSL/TLS Websocket-SSH Python
-wget -O /etc/systemd/system/ws-stunnel.service https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/ws-dropbear.service && chmod +x /etc/systemd/system/ws-stunnel.service
+wget -O /etc/systemd/system/ws-stunnel.service https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/ws-stunnel.service && chmod +x /etc/systemd/system/ws-stunnel.service
 
 
 #restart service
