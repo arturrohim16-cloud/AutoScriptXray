@@ -81,17 +81,13 @@ if [ "" = "$PKG_OK" ]; then
   echo -e "[ ${BBlue}NOTES${NC} ] enter now"
   read
 else
-  if [ $? -eq 0 ]; then
+if [ $? -eq 0 ]; then
   echo -e "[ ${BGreen}INFO${NC} ] Linux Headers installed successfully"
 else
   echo -e "[ ${BRed}WARNING${NC} ] Failed to install headers, trying update first..."
   apt-get update && apt-get install -y linux-headers-generic
-fi ! dpkg -s $ReqPKG  >/dev/null 2>&1; then
-  rm /root/setup.sh >/dev/null 2>&1 
-  exit
-else
-  clear
 fi
+clear
 
 
 secs_to_human() {
