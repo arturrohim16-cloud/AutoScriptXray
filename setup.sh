@@ -85,7 +85,7 @@ else
 fi
 
 ttet=`uname -r`
-ReqPKG="linux-headers-$ttet"
+ReqPKG="linux-headers-generic$ttet"
 if ! dpkg -s $ReqPKG  >/dev/null 2>&1; then
   rm /root/setup.sh >/dev/null 2>&1 
   exit
@@ -125,9 +125,9 @@ echo -e "$BGreen 1. Use Domain Random / Gunakan Domain Random $NC"
 echo -e "$BGreen 2. Choose Your Own Domain / Gunakan Domain Sendiri $NC"
 echo -e "$BYellow----------------------------------------------------------$NC"
 read -rp " input 1 or 2 / pilih 1 atau 2 : " dns
-if test $dns -eq 1; then
+if test [[ "$dns" == "1" ]]; then
 wget -q -O cf "https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/ssh/cf" && chmod +x cf && ./cf
-elif test $dns -eq 2; then
+elif test [[ "$dns" == "2" ]]; then
 read -rp "Enter Your Domain / masukan domain : " dom
 echo "IP=$dom" > /var/lib/ipvps.conf
 echo "$dom" > /root/scdomain
