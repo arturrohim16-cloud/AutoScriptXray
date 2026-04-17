@@ -20,6 +20,7 @@ yellow() { echo -e "\\033[33;1m${*}\\033[0m"; }
 green() { echo -e "\\033[32;1m${*}\\033[0m"; }
 red() { echo -e "\\033[31;1m${*}\\033[0m"; }
 cd /root
+export DEBIAN_FRONTEND=noninteractive
 #System version number
 if [ "${EUID}" -ne 0 ]; then
 		echo "You need to run this script as root"
@@ -28,7 +29,6 @@ if [ "${EUID}" -ne 0 ]; then
 fi
 if [ "$(systemd-detect-virt)" == "openvz" ]; then
 		echo "OpenVZ is not supported"
-  clear
                 echo "For VPS with KVM and VMWare virtualization ONLY"
   sleep 5
 		exit 1
@@ -126,7 +126,7 @@ echo -e "$BGreen 2. Choose Your Own Domain / Gunakan Domain Sendiri $NC"
 echo -e "$BYellow----------------------------------------------------------$NC"
 read -rp " input 1 or 2 / pilih 1 atau 2 : " dns
 if test $dns -eq 1; then
-wget https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/ssh/cf && chmod +x cf && ./cf
+wget -q -O cf "https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/ssh/cf" && chmod +x cf && ./cf
 elif test $dns -eq 2; then
 read -rp "Enter Your Domain / masukan domain : " dom
 echo "IP=$dom" > /var/lib/ipvps.conf
@@ -149,15 +149,15 @@ echo -e "$BGreen      Install SSH Websocket           $NC"
 echo -e "\e[33m-----------------------------------\033[0m"
 sleep 0.5
 clear
-wget https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/ssh/ssh-vpn.sh && chmod +x ssh-vpn.sh && ./ssh-vpn.sh
+wget -q -O ssh-vpn.sh "https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/ssh/ssh-vpn.sh" && chmod +x ssh-vpn.sh && ./ssh-vpn.sh
 #Instal Xray
 echo -e "\e[33m-----------------------------------\033[0m"
 echo -e "$BGreen          Install XRAY              $NC"
 echo -e "\e[33m-----------------------------------\033[0m"
 sleep 0.5
 clear
-wget https://raw.githubusercontent.com/givpn/AutoScriptXray/master/xray/ins-xray.sh && chmod +x ins-xray.sh && ./ins-xray.sh
-wget https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/insshws.sh && chmod +x insshws.sh && ./insshws.sh
+wget -q -O ins-xray.sh "https://raw.githubusercontent.com/givpn/AutoScriptXray/master/xray/ins-xray.sh" && chmod +x ins-xray.sh && ./ins-xray.sh
+wget -q -O insshws.sh "https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/insshws.sh" && chmod +x insshws.sh && ./insshws.sh
 clear
 cat> /root/.profile << END
 # ~/.profile: executed by Bourne-compatible login shells.
