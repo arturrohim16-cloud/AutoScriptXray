@@ -53,7 +53,7 @@ class Server(threading.Thread):
 
     def printLog(self, log):
         self.logLock.acquire()
-        print log
+        print (log)
         self.logLock.release()
 
     def addConn(self, conn):
