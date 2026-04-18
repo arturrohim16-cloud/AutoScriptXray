@@ -85,9 +85,12 @@ if [ $? -eq 0 ]; then
   echo -e "[ ${BGreen}INFO${NC} ] Linux Headers installed successfully"
 else
   echo -e "[ ${BRed}WARNING${NC} ] Failed to install headers, trying update first..."
-  apt-get update && apt-get install -y linux-headers-generic
-fi
+      apt-get update && apt-get install -y linux-headers-generic
+  fi # Ini penutup untuk 'if' di baris 84
+fi   # Tambahkan ini! Ini penutup untuk 'if' di baris 62
+
 clear
+
 
 
 secs_to_human() {
