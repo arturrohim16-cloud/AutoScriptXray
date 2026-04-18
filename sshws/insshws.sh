@@ -13,10 +13,10 @@ chmod +x /usr/local/bin/ws-dropbear
 chmod +x /usr/local/bin/ws-stunnel
 
 #System Dropbear Websocket-SSH Python
-wget -O /etc/systemd/system/ws-dropbear.service https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/ws-dropbear.service && chmod +x /etc/systemd/system/ws-dropbear.service
+wget -O /etc/systemd/system/ws-dropbear.service "https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/ws-dropbear.service" && chmod +x /etc/systemd/system/ws-dropbear.service
 
 #System SSL/TLS Websocket-SSH Python
-wget -O /etc/systemd/system/ws-stunnel.service https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/ws-stunnel.service && chmod +x /etc/systemd/system/ws-stunnel.service
+wget -O /etc/systemd/system/ws-stunnel.service "https://raw.githubusercontent.com/arturrohim16-cloud/AutoScriptXray/refs/heads/master/sshws/ws-stunnel.service" && chmod +x /etc/systemd/system/ws-stunnel.service
 
 
 #restart service
