@@ -56,6 +56,10 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
 
 ## crt xray
 systemctl stop nginx
+systemctl stop ws-dropbear
+systemctl stop ws-stunnel
+systemctl stop xray
+killall python3 # Memastikan tidak ada python yang nyangkut di port 80
 mkdir /root/.acme.sh
 curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
 chmod +x /root/.acme.sh/acme.sh
